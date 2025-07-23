@@ -563,6 +563,13 @@ type PodSpec struct {
 	HookScript                   string                            `json:"hookScript,omitempty"`
 	Lifecycle                    corev1.Lifecycle                  `json:"lifecycle,omitempty"`
 	TopologySpreadConstraints    []corev1.TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
+	ExtraPVCs                    []ExtraPVC                        `json:"extraPVCs,omitempty"`
+}
+
+type ExtraPVC struct {
+	VolumeClaimTemplate corev1.PersistentVolumeClaim `json:"volumeClaimTemplate,omitempty"`
+	MountPath           string                       `json:"mountPath,omitempty"`
+	ReadOnly            *bool                        `json:"readOnly,omitempty"`
 }
 
 func (spec *PodSpec) HasSidecarInternalSecret(secret *corev1.Secret) bool {
@@ -1517,6 +1524,14 @@ func AddSidecarContainers(log logr.Logger, existing, sidecars []corev1.Container
 		}
 
 		existing = append(existing, c)
+	}
+
+	return existing
+}
+
+func AddExtraVolumes(log logr.Logger, existing []corev1.Volume, extraVolumes []ExtraPVC) []corev1.Volume {
+	if len(extraVolumes) == 0 {
+		return existing
 	}
 
 	return existing
