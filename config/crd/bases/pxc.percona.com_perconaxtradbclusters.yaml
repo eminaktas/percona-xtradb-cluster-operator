@@ -1896,6 +1896,7 @@ spec:
                                   type: string
                               type: object
                           type: object
+                          x-kubernetes-embedded-resource: true
                       type: object
                     type: array
                   gracePeriod:
@@ -2564,6 +2565,7 @@ spec:
                               type: string
                           type: object
                       type: object
+                      x-kubernetes-embedded-resource: true
                     type: array
                   sidecarResources:
                     properties:
@@ -5552,6 +5554,7 @@ spec:
                                   type: string
                               type: object
                           type: object
+                          x-kubernetes-embedded-resource: true
                       type: object
                     type: array
                   gracePeriod:
@@ -6214,6 +6217,7 @@ spec:
                               type: string
                           type: object
                       type: object
+                      x-kubernetes-embedded-resource: true
                     type: array
                   sidecarResources:
                     properties:
@@ -8670,6 +8674,7 @@ spec:
                                   type: string
                               type: object
                           type: object
+                          x-kubernetes-embedded-resource: true
                       type: object
                     type: array
                   gracePeriod:
@@ -9365,6 +9370,7 @@ spec:
                               type: string
                           type: object
                       type: object
+                      x-kubernetes-embedded-resource: true
                     type: array
                   sidecarResources:
                     properties:
