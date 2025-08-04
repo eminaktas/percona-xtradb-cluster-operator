@@ -1531,14 +1531,6 @@ func AddSidecarContainers(log logr.Logger, existing, sidecars []corev1.Container
 	return existing
 }
 
-func AddExtraVolumes(log logr.Logger, existing []corev1.Volume, extraVolumes []ExtraPVC) []corev1.Volume {
-	if len(extraVolumes) == 0 {
-		return existing
-	}
-
-	return existing
-}
-
 func AddSidecarVolumes(log logr.Logger, existing, sidecarVolumes []corev1.Volume) []corev1.Volume {
 	if len(sidecarVolumes) == 0 {
 		return existing
@@ -1578,6 +1570,59 @@ func AddSidecarPVCs(log logr.Logger, existing, sidecarPVCs []corev1.PersistentVo
 		}
 
 		existing = append(existing, p)
+	}
+
+	return existing
+}
+
+func AddExtraVolumeMounts(log logr.Logger, existing []corev1.VolumeMount, extraPVCs []ExtraPVC) []corev1.VolumeMount {
+	if len(extraPVCs) == 0 {
+		return existing
+	}
+
+	names := make(map[string]struct{}, len(existing))
+	for _, v := range existing {
+		names[v.Name] = struct{}{}
+	}
+
+	for _, v := range extraPVCs {
+		name := v.VolumeClaimTemplate.GetName()
+		if _, ok := names[name]; ok {
+			log.Info("Volume name already exists, it is skipped", "volumeName", name)
+			continue
+		}
+
+		existing = append(existing, corev1.VolumeMount{
+			Name:      name,
+			MountPath: v.MountPath,
+			ReadOnly:  *v.ReadOnly,
+		})
+	}
+
+	return existing
+}
+
+func AddExtraPVCs(log logr.Logger, existing []corev1.PersistentVolumeClaim, extraPVCs []ExtraPVC, labels map[string]string) []corev1.PersistentVolumeClaim {
+	if len(extraPVCs) == 0 {
+		return existing
+	}
+
+	names := make(map[string]struct{}, len(existing))
+	for _, p := range existing {
+		names[p.Name] = struct{}{}
+	}
+
+	for _, p := range extraPVCs {
+		name := p.VolumeClaimTemplate.GetName()
+		if _, ok := names[name]; ok {
+			log.Info("PVC name already exists, it is skipped", "PVCName", name)
+			continue
+		}
+
+		util.MergeMaps(labels, p.VolumeClaimTemplate.Labels)
+		p.VolumeClaimTemplate.SetLabels(labels)
+
+		existing = append(existing, p.VolumeClaimTemplate)
 	}
 
 	return existing
