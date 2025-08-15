@@ -120,10 +120,6 @@ func (c *Node) AppContainer(spec *api.PodSpec, secrets string, cr *api.PerconaXt
 				MountPath: "/etc/percona-xtradb-cluster.conf.d",
 			},
 			{
-				Name:      "tmp",
-				MountPath: "/tmp",
-			},
-			{
 				Name:      "ssl",
 				MountPath: "/etc/mysql/ssl",
 			},
